@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Three.js Model Viewer</title>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+    #model-upload {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <input type="file" id="model-upload">
+  <script src="https://threejs.org/build/three.js"></script>
+  <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+  <script>
+    // Initialize Three.js scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Create an instance of GLTFLoader
+    const loader = new THREE.GLTFLoader();
+
+    // Function to handle file upload
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const result = event.target.result;
+
+        // Load the 3D model using GLTFLoader
+        loader.parse(result, '', function (gltf) {
+          const model = gltf.scene;
+          scene.add(model);
+        });
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Attach event listener to file upload input
+    const fileInput = document.getElementById('model-upload');
+    fileInput.addEventListener('change', handleFileUpload, false);
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      // Perform any desired animations or updates here
+      renderer.render(scene, camera);
+    }
+
+    // Start the animation loop
+    animate();
+  </script>
+</body>
+</html>
